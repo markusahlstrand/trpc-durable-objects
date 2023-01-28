@@ -13,21 +13,15 @@ router.get('/', async (ctx: Context<Env>) => {
 });
 
 router.get('/hey', async (ctx: Context<Env>) => {
-  const url = 'http://127.0.0.1:8787/trpc';
+  const url = 'http://localhost:8787/trpc';
 
   const stub = ctx.env.COUNTER.get(ctx.env.COUNTER.idFromName('test'));
 
-  // globalThis.fetch = stub.fetch;
+  const proxy = createTRPCProxyClient<AppRouter>({
+    links: [loggerLink(), httpBatchLink({ url, fetch: stub.fetch.bind(stub) })],
+  });
 
-  // const proxy = createTRPCProxyClient<AppRouter>({
-  //   links: [loggerLink(), httpBatchLink({ url })],
-  // });
-
-  // const response = await proxy.hello.query();
-
-  const response = await stub.fetch('http://localhost:8787/trpc/hello');
-
-  const body = await response.json();
+  const body = await proxy.hello.query('Markus');
 
   return new Response(JSON.stringify(body));
 });
