@@ -1,15 +1,9 @@
 import { Router, Context } from 'cloudworker-router';
+import { createTRPCProxyClient, httpBatchLink, loggerLink } from '@trpc/client';
+import type { AppRouter } from './router';
 
 export interface Env {
-  DUMMY_VAR: string;
-  // Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
-  // MY_KV_NAMESPACE: KVNamespace;
-  //
-  // Example binding to Durable Object. Learn more at https://developers.cloudflare.com/workers/runtime-apis/durable-objects/
-  // MY_DURABLE_OBJECT: DurableObjectNamespace;
-  //
-  // Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
-  // MY_BUCKET: R2Bucket;
+  COUNTER: DurableObjectNamespace;
 }
 
 const router = new Router<Env>();
@@ -18,9 +12,27 @@ router.get('/', async (ctx: Context<Env>) => {
   return new Response('Hello world');
 });
 
-router.get('/env', async (ctx: Context<Env>) => {
-  return new Response(ctx.env.DUMMY_VAR);
+router.get('/hey', async (ctx: Context<Env>) => {
+  const url = 'http://127.0.0.1:8787/trpc';
+
+  const stub = ctx.env.COUNTER.get(ctx.env.COUNTER.idFromName('test'));
+
+  // globalThis.fetch = stub.fetch;
+
+  // const proxy = createTRPCProxyClient<AppRouter>({
+  //   links: [loggerLink(), httpBatchLink({ url })],
+  // });
+
+  // const response = await proxy.hello.query();
+
+  const response = await stub.fetch('http://localhost:8787/trpc/hello');
+
+  const body = await response.json();
+
+  return new Response(JSON.stringify(body));
 });
+
+export { Counter } from './Counter';
 
 export default {
   async fetch(
