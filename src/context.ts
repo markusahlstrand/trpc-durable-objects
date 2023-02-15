@@ -1,4 +1,3 @@
-import { inferAsyncReturnType } from '@trpc/server';
 import { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 
 export class ContextFactory {

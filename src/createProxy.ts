@@ -1,20 +1,19 @@
-import { createTRPCProxyClient, httpBatchLink, loggerLink } from '@trpc/client';
 import {
-  AnyRootConfig,
-  AnyRouter,
-  DefaultDataTransformer,
-  DefaultErrorShape,
-  initTRPC,
-  RootConfig,
-  Router,
-} from '@trpc/server';
+  CreateTRPCClientOptions,
+  createTRPCProxyClient,
+  httpBatchLink,
+  loggerLink,
+} from '@trpc/client';
+import { AnyRootConfig, AnyRouter, initTRPC, Router } from '@trpc/server';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
-import { AnyRouterDef, CreateRouterInner } from '@trpc/server/dist/core/router';
+import { AnyRouterDef } from '@trpc/server/dist/core/router';
 import { Context, ContextFactory } from './context';
 
 const t = initTRPC.context<Context>().create();
 
-export default function createProxy(router: AnyRouter) {
+export default function createProxy<
+  TRouter extends Router<AnyRouterDef<AnyRootConfig, any>>,
+>(router: AnyRouter) {
   return class DOProxy implements DurableObject {
     state: DurableObjectState;
 
@@ -22,9 +21,7 @@ export default function createProxy(router: AnyRouter) {
       this.state = state;
     }
 
-    static getInstance<
-      TRouter extends Router<AnyRouterDef<AnyRootConfig, any>>,
-    >(namespace: DurableObjectNamespace, name: string) {
+    static getInstance(namespace: DurableObjectNamespace, name: string) {
       const stub = namespace.get(namespace.idFromName(name));
 
       const proxy = createTRPCProxyClient<TRouter>({
@@ -35,7 +32,7 @@ export default function createProxy(router: AnyRouter) {
             fetch: stub.fetch.bind(stub),
           }),
         ],
-      });
+      } as CreateTRPCClientOptions<TRouter>);
 
       return proxy;
     }
