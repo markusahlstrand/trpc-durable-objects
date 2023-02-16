@@ -4,6 +4,7 @@ import {
   httpBatchLink,
   loggerLink,
 } from '@trpc/client';
+import { FetchEsque } from '@trpc/client/dist/internals/types';
 import { AnyRootConfig, AnyRouter, initTRPC, Router } from '@trpc/server';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { AnyRouterDef } from '@trpc/server/dist/core/router';
@@ -29,7 +30,7 @@ export default function createProxy<
           loggerLink(),
           httpBatchLink({
             url: 'http://localhost:8787/trpc',
-            fetch: stub.fetch.bind(stub),
+            fetch: stub.fetch.bind(stub) as unknown as FetchEsque,
           }),
         ],
       } as CreateTRPCClientOptions<TRouter>);
