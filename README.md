@@ -4,6 +4,12 @@ After playing around with Durable Objects for a while I realized that this conce
 
 This package provides a factory for creating both the strictly typed stub and server for a durable object using a TRPC-router.
 
+## Installation
+
+```bash
+npm install trpc-durable-objects --save
+```
+
 ## Usage
 
 The first step is to create a TRPC router:
