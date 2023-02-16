@@ -1,10 +1,11 @@
 {
   "name": "trpc-durable-objects",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Testing out trpc for durable objects",
   "files": [
-    "dist/src/**/*"
+    "dist/**/*"
   ],
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "test": "jest --config jestconfig.json --verbose",
