@@ -8,9 +8,6 @@ export class ContextFactory {
   }
 
   createContext({ req, resHeaders }: FetchCreateContextFnOptions) {
-    console.log('create context: ' + typeof this.state);
-
-    const user = { name: req.headers.get('username') ?? 'anonymous' };
     return { req, resHeaders, state: this.state };
   }
 }

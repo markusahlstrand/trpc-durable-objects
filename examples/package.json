@@ -1,8 +1,12 @@
 {
+  "private": true,
   "name": "trpc-durable-objects",
   "version": "1.1.0",
   "description": "Testing out trpc for durable objects",
+  "main": "dist/worker.js",
   "scripts": {
+    "dev": "wrangler dev",
+    "publish": "wrangler publish --env ${NODE_ENV}",
     "test": "jest --config jestconfig.json --verbose",
     "format": "prettier --write '**/*.{js,css,json,md}'",
     "semantic-release": "semantic-release",
@@ -33,7 +37,7 @@
       ]
     ]
   },
-  "author": "Markus Ahlstrand <markus@ahlstrand.es>",
+  "author": "Markus Ahlstrand <markus@sesamy.com>",
   "license": "ISC",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230115.0",
@@ -62,6 +66,7 @@
     "@sagi.io/workers-jwt": "^0.0.23",
     "@trpc/client": "^10.9.0",
     "@trpc/server": "^10.9.0",
+    "cloudworker-router": "4.1.0",
     "serverless-cloudflare-workers": "^1.2.0",
     "zod": "^3.0.0"
   }
