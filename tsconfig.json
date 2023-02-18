@@ -1,18 +1,30 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
+    "lib": ["es2020"],
     "module": "commonjs",
-    "target": "esnext",
-    "lib": ["esnext"],
-    "alwaysStrict": true,
+    "target": "es2020",
     "strict": true,
-    "preserveConstEnums": true,
     "resolveJsonModule": true,
+    // The following three options are set for
+    "allowJs": true,
+    "checkJs": false,
+    "noImplicitAny": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "sourceMap": true,
-    "esModuleInterop": true,
-    "types": ["@cloudflare/workers-types", "@types/jest"]
+    "declaration": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "types": [
+      "@cloudflare/workers-types",
+      "@types/jest",
+      "@types/service-worker-mock"
+    ],
+    "paths": {
+      "*": ["node_modules/*"]
+    }
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "test"]
+  "include": ["src/**/*", "test/**/*"]
 }
