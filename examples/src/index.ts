@@ -1,6 +1,6 @@
 import { Router, Context } from 'cloudworker-router';
 import { CounterRouter, counterRouter } from './Counter';
-import createProxy from '../../src/createProxy';
+import { createProxy } from '../../src';
 
 export const Counter = createProxy<CounterRouter>(counterRouter);
 

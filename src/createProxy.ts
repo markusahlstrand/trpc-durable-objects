@@ -12,7 +12,7 @@ import { Context, ContextFactory } from './context';
 
 const t = initTRPC.context<Context>().create();
 
-export default function createProxy<
+export function createProxy<
   TRouter extends Router<AnyRouterDef<AnyRootConfig, any>>,
 >(router: AnyRouter) {
   return class DOProxy implements DurableObject {

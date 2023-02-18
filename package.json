@@ -1,6 +1,6 @@
 {
   "name": "trpc-durable-objects",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Testing out trpc for durable objects",
   "files": [
     "dist/**/*"
