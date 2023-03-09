@@ -1,8 +1,8 @@
 import { Router, Context } from 'cloudworker-router';
-import { CounterRouter, counterRouter } from './Counter';
+import { CounterRouter, counterRouter, counterAlarm } from './Counter';
 import { createProxy } from '../../src';
 
-export const Counter = createProxy<CounterRouter>(counterRouter);
+export const Counter = createProxy<CounterRouter>(counterRouter, counterAlarm);
 
 export interface Env {
   COUNTER: DurableObjectNamespace;
@@ -28,6 +28,14 @@ router.get('/:id/down', async (ctx: Context<Env>) => {
   const body = await counter.down.query();
 
   return new Response(JSON.stringify(body));
+});
+
+router.get('/:id/trigger', async (ctx: Context<Env>) => {
+  const counter = Counter.getInstance(ctx.env.COUNTER, ctx.params.id);
+
+  await counter.triggerAlarm.query();
+
+  return new Response('triggered alarm');
 });
 
 export default {

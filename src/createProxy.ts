@@ -12,9 +12,11 @@ import { Context, ContextFactory } from './context';
 
 const t = initTRPC.context<Context>().create();
 
+export { AnyRootConfig, AnyRouter, Router };
+
 export function createProxy<
   TRouter extends Router<AnyRouterDef<AnyRootConfig, any>>,
->(router: AnyRouter) {
+>(router: AnyRouter, alarm?: (state: DurableObjectState) => Promise<void>) {
   return class DOProxy implements DurableObject {
     state: DurableObjectState;
 
@@ -36,6 +38,12 @@ export function createProxy<
       } as CreateTRPCClientOptions<TRouter>);
 
       return proxy;
+    }
+
+    async alarm() {
+      if (alarm) {
+        await alarm(this.state);
+      }
     }
 
     async fetch(request: Request) {
