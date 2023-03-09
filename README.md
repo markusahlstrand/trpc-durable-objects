@@ -74,3 +74,18 @@ export default {
   },
 };
 ```
+
+### Using alarms
+
+It's possible to pass a second parameter to the createProxy factory method that will be executed once an alarm is triggered within the durable object instance:
+
+```
+async function counterAlarm(state: DurableObjectState) {
+  const count: number | undefined = await state.storage.get('count');
+
+  console.log(`alarm with counter: ${count}`);
+}
+
+export const Counter = createProxy<CounterRouter>(counterRouter, counterAlarm);
+
+```
