@@ -15,7 +15,7 @@ router.get('/', async (ctx: Context<Env>) => {
 });
 
 router.get('/:id/up', async (ctx: Context<Env>) => {
-  const counter = Counter.getInstance(ctx.env.COUNTER, ctx.params.id);
+  const counter = Counter.getInstanceByName(ctx.env.COUNTER, ctx.params.id);
 
   const body = await counter.up.query();
 
@@ -23,7 +23,7 @@ router.get('/:id/up', async (ctx: Context<Env>) => {
 });
 
 router.get('/:id/down', async (ctx: Context<Env>) => {
-  const counter = Counter.getInstance(ctx.env.COUNTER, ctx.params.id);
+  const counter = Counter.getInstanceByName(ctx.env.COUNTER, ctx.params.id);
 
   const body = await counter.down.query();
 
@@ -31,7 +31,7 @@ router.get('/:id/down', async (ctx: Context<Env>) => {
 });
 
 router.get('/:id/trigger', async (ctx: Context<Env>) => {
-  const counter = Counter.getInstance(ctx.env.COUNTER, ctx.params.id);
+  const counter = Counter.getInstanceByName(ctx.env.COUNTER, ctx.params.id);
 
   await counter.triggerAlarm.query();
 

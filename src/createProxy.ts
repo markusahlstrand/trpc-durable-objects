@@ -24,8 +24,14 @@ export function createProxy<
       this.state = state;
     }
 
-    static getInstance(namespace: DurableObjectNamespace, name: string) {
-      const stub = namespace.get(namespace.idFromName(name));
+    static getInstanceByName(namespace: DurableObjectNamespace, name: string) {
+      const id = namespace.idFromName(name);
+
+      return DOProxy.getInstance(namespace, id);
+    }
+
+    static getInstance(namespace: DurableObjectNamespace, id: DurableObjectId) {
+      const stub = namespace.get(id);
 
       const proxy = createTRPCProxyClient<TRouter>({
         links: [

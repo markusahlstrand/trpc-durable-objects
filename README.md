@@ -53,7 +53,7 @@ The router will be executed within a durable object but the types are exposed so
 
 The router is then passed to the factory method:
 
-```
+```javascript
 import { CounterRouter, counterRouter } from './Counter';
 import { createProxy } from 'trpc-durable-object';
 
@@ -65,7 +65,34 @@ export default {
     env: Env,
     ctx: ExecutionContext,
   ): Promise<Response> {
-    const counter = Counter.getInstance(env.COUNTER, 'dummy-id');
+    const counter = Counter.getInstanceByName(env.COUNTER, 'dummy-id');
+
+    // increase the counter value
+    const body = await counter.up.query();
+
+    ...
+  },
+};
+```
+
+The factory method will return a proxy that can be used to interact with the durable object. The proxy will be strictly typed and will provide a stub that can be used to interact with the durable object.
+
+The getInstanceByName is slightly slower than the getInstance method as it needs to look up in which instance the durable object is located. It is also possible to work with the DurableObjectId's directly which is faster:
+
+```javascript
+import { CounterRouter, counterRouter } from './Counter';
+import { createProxy } from 'trpc-durable-object';
+
+export const Counter = createProxy<CounterRouter>(counterRouter);
+
+export default {
+  async fetch(
+    request: Request,
+    env: Env,
+    ctx: ExecutionContext,
+  ): Promise<Response> {
+    const id = env.Counter.newUniqueId();
+    const counter = Counter.getInstance(env.COUNTER, id);
 
     // increase the counter value
     const body = await counter.up.query();
