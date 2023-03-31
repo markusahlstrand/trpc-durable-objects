@@ -25,9 +25,15 @@ export function createProxy<
     }
 
     static getInstanceByName(namespace: DurableObjectNamespace, name: string) {
-      const id = namespace.idFromName(name);
+      const durableObjectId = namespace.idFromName(name);
 
-      return DOProxy.getInstance(namespace, id);
+      return DOProxy.getInstance(namespace, durableObjectId);
+    }
+
+    static getInstanceById(namespace: DurableObjectNamespace, id: string) {
+      const durableObjectId = namespace.idFromString(id);
+
+      return DOProxy.getInstance(namespace, durableObjectId);
     }
 
     static getInstance(namespace: DurableObjectNamespace, id: DurableObjectId) {
