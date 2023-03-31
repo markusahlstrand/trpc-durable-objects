@@ -14,6 +14,14 @@ router.get('/', async (ctx: Context<Env>) => {
   return new Response('Hello world');
 });
 
+router.post('/', async (ctx: Context<Env>) => {
+  const id = ctx.env.COUNTER.newUniqueId();
+
+  const counter = Counter.getInstance(ctx.env.COUNTER, id);
+  const body = await counter.up.query();
+  return new Response('Hello world');
+});
+
 router.get('/:id/up', async (ctx: Context<Env>) => {
   const counter = Counter.getInstanceByName(ctx.env.COUNTER, ctx.params.id);
 
