@@ -1,6 +1,8 @@
 import { initTRPC } from '@trpc/server';
 import { z } from 'zod';
 import { Context } from '../../src/context';
+import { createProxy } from '../../src';
+import { Env } from './env';
 
 const t = initTRPC.context<Context>().create();
 
@@ -42,3 +44,9 @@ export async function counterAlarm(state: DurableObjectState) {
 }
 
 export type CounterRouter = typeof counterRouter;
+
+// @ts-ignore
+export const Counter = createProxy<CounterRouter, Env>(
+  counterRouter,
+  counterAlarm,
+);

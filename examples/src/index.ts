@@ -1,16 +1,11 @@
 import { Router, Context } from 'cloudworker-router';
-import { CounterRouter, counterRouter, counterAlarm } from './Counter';
-import { createProxy } from '../../src';
-
-// @ts-ignore
-export const Counter = createProxy<CounterRouter, Context>(
-  counterRouter,
-  counterAlarm,
-);
+import { Counter } from './Counter';
 
 export interface Env {
   COUNTER: DurableObjectNamespace;
 }
+
+export { Counter };
 
 const router = new Router<Env>();
 

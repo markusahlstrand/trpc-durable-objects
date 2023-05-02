@@ -1,6 +1,6 @@
 # TRPC Durable Objects
 
-After playing around with Durable Objects for a while I realized that this conceptually really is an RPC setup, you create a stub and want to interact with a remote object. I had a look at [itty-durable](https://github.com/kwhitley/itty-durable) which is a cool solution, but it doesn't provide strict typing. A few weeks ago I bumped into the [TRPC](https://trpc.io/) framework that seems to be the perfect solution for doing typesafe RPC.
+After playing around with Durable Objects for a while I realized that this conceptually really is an RPC setup, you create a stub and want to interact with a remote object. I had a look at [itty-durable](https://github.com/kwhitley/itty-durable) which is a cool solution, but it doesn't provide strict typing. A few weeks ago I bumped into the [tRPC](https://trpc.io/) framework that seems to be the perfect solution for doing typesafe RPC.
 
 This package provides a factory for creating both the strictly typed stub and server for a durable object using a TRPC-router.
 
