@@ -1,12 +1,14 @@
 import { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 
-export class ContextFactory {
+export class ContextFactory<Context = any> {
   state: DurableObjectState;
+  context: Context;
 
   name?: string;
 
-  constructor(state: DurableObjectState, name?: string) {
+  constructor(state: DurableObjectState, context: Context, name?: string) {
     this.state = state;
+    this.context = context;
     this.name = name;
   }
 

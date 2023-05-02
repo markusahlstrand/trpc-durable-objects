@@ -16,12 +16,25 @@ export { AnyRootConfig, AnyRouter, Router };
 
 export function createProxy<
   TRouter extends Router<AnyRouterDef<AnyRootConfig, any>>,
+  Context = any,
 >(router: AnyRouter, alarm?: (state: DurableObjectState) => Promise<void>) {
   return class DOProxy implements DurableObject {
     state: DurableObjectState;
 
-    constructor(state: DurableObjectState) {
+    context: Context;
+
+    constructor(state: DurableObjectState, context: Context) {
       this.state = state;
+      this.context = context;
+    }
+
+    static getFactory(namespace: DurableObjectNamespace) {
+      return {
+        getInstanceByName: (name: string) =>
+          this.getInstanceByName(namespace, name),
+        getInstanceById: (id: string) => this.getInstanceById(namespace, id),
+        getInstance: (id: DurableObjectId) => this.getInstance(namespace, id),
+      };
     }
 
     static getInstanceByName(namespace: DurableObjectNamespace, name: string) {
@@ -59,7 +72,7 @@ export function createProxy<
     }
 
     async fetch(request: Request) {
-      const contextFactory = new ContextFactory(this.state);
+      const contextFactory = new ContextFactory(this.state, this.context);
 
       return fetchRequestHandler({
         endpoint: '/trpc',
