@@ -1,30 +1,31 @@
 import { Router, Context } from 'cloudworker-router';
 import { Counter } from './Counter';
-
-export interface Env {
-  COUNTER: DurableObjectNamespace;
-}
+import { Env } from './env';
 
 export { Counter };
 
 const router = new Router<Env>();
 
 router.get('/', async (ctx: Context<Env>) => {
-  return new Response('Hello world');
+  const id = ctx.env.COUNTER.newUniqueId();
+
+  const counter = Counter.getInstance(ctx.env.COUNTER, id);
+  const body = await counter.echo.query();
+  return new Response('Test variable: ' + body);
 });
 
 router.post('/', async (ctx: Context<Env>) => {
   const id = ctx.env.COUNTER.newUniqueId();
 
   const counter = Counter.getInstance(ctx.env.COUNTER, id);
-  const body = await counter.up.query();
+  const body = await counter.up.mutate();
   return new Response('Hello world');
 });
 
 router.get('/:id/up', async (ctx: Context<Env>) => {
   const counter = Counter.getInstanceByName(ctx.env.COUNTER, ctx.params.id);
 
-  const body = await counter.up.query();
+  const body = await counter.up.mutate();
 
   return new Response(JSON.stringify(body));
 });
@@ -32,7 +33,7 @@ router.get('/:id/up', async (ctx: Context<Env>) => {
 router.get('/:id/down', async (ctx: Context<Env>) => {
   const counter = Counter.getInstanceByName(ctx.env.COUNTER, ctx.params.id);
 
-  const body = await counter.down.query();
+  const body = await counter.down.mutate();
 
   return new Response(JSON.stringify(body));
 });

@@ -13,7 +13,7 @@ const router = t.router;
 export const counterRouter = router({
   up: publicProcedure
     .input(z.string().nullish())
-    .query(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       const count: number | undefined = await ctx.state.storage.get('count');
       const newCount = (count || 0) + 1;
 
@@ -22,13 +22,16 @@ export const counterRouter = router({
     }),
   down: publicProcedure
     .input(z.string().nullish())
-    .query(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       const count: number | undefined = await ctx.state.storage.get('count');
       const newCount = (count || 0) - 1;
 
       await ctx.state.storage.put('count', newCount);
       return `Count: ${newCount}`;
     }),
+  echo: publicProcedure.input(z.string().nullish()).query(async ({ ctx }) => {
+    return ctx.env.TEST_VAR;
+  }),
   triggerAlarm: publicProcedure
     .input(z.string().nullish())
     .query(async ({ input, ctx }) => {
