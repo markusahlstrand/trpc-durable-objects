@@ -10,18 +10,35 @@ import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { AnyRouterDef } from '@trpc/server/dist/core/router';
 import { Context, ContextFactory } from './context';
 
-const t = initTRPC.context<Context>().create();
-
 export { AnyRootConfig, AnyRouter, Router };
+
+export interface ModelFactory<Model> {
+  getInstanceByName(namespace: DurableObjectNamespace, name: string): Model;
+}
 
 export function createProxy<
   TRouter extends Router<AnyRouterDef<AnyRootConfig, any>>,
+  Env = any,
 >(router: AnyRouter, alarm?: (state: DurableObjectState) => Promise<void>) {
+  const t = initTRPC.context<Context<Env>>().create();
+
   return class DOProxy implements DurableObject {
     state: DurableObjectState;
 
-    constructor(state: DurableObjectState) {
+    env: Env;
+
+    constructor(state: DurableObjectState, env: Env) {
       this.state = state;
+      this.env = env;
+    }
+
+    static getFactory(namespace: DurableObjectNamespace, env: Env) {
+      return {
+        getInstanceByName: (name: string) =>
+          this.getInstanceByName(namespace, name),
+        getInstanceById: (id: string) => this.getInstanceById(namespace, id),
+        getInstance: (id: DurableObjectId) => this.getInstance(namespace, id),
+      };
     }
 
     static getInstanceByName(namespace: DurableObjectNamespace, name: string) {
@@ -59,7 +76,7 @@ export function createProxy<
     }
 
     async fetch(request: Request) {
-      const contextFactory = new ContextFactory(this.state);
+      const contextFactory = new ContextFactory(this.state, this.env);
 
       return fetchRequestHandler({
         endpoint: '/trpc',
