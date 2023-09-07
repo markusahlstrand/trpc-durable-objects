@@ -14,6 +14,10 @@ const t = initTRPC.context<Context>().create();
 
 export { AnyRootConfig, AnyRouter, Router };
 
+export interface ModelFactory<Model> {
+  getInstanceByName(namespace: DurableObjectNamespace, name: string): Model;
+}
+
 export function createProxy<
   TRouter extends Router<AnyRouterDef<AnyRootConfig, any>>,
   Env = any,

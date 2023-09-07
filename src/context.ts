@@ -15,9 +15,9 @@ export class ContextFactory<Env = any> {
   }
 }
 
-export type Context = {
+export type Context<Env> = {
   req: Request;
   resHeaders: Headers;
   state: DurableObjectState;
-  env: any;
+  env: Env;
 };

@@ -116,3 +116,75 @@ async function counterAlarm(state: DurableObjectState) {
 export const Counter = createProxy<CounterRouter>(counterRouter, counterAlarm);
 
 ```
+
+### Using factories
+
+To make tRPC durable objects easy to work with and to test it's possible to add a factory to the Env:
+
+```
+export const State = createProxy<StateRouter>(stateRouter, stateAlarm);
+export type StateClient = ReturnType<typeof State.getInstance>;
+
+export interface ClientFactory<ClientType> {
+  getInstanceById: (id: string) => ClientType;
+  getInstanceByName: (name: string) => ClientType;
+}
+
+export interface Env {
+  stateFactory: ClientFactory<StateClient>;
+}
+```
+
+The factory is decorated to the Env of each request:
+
+```
+const server = {
+  async fetch(
+    request: Request,
+    env: Env,
+    ctx: ExecutionContext,
+  ): Promise<Response> {
+    return app.handle(
+      request,
+      // Add dependencies to the environment
+      {
+        ...env,
+        stateFactory: State.getFactory(env.STATE, env),
+      },
+      ctx,
+    );
+  },
+}
+```
+
+An instance of the tRPC object can be fetched like this:
+
+```
+const stateInstance = env.stateFactory.getInstanceByName("test");
+```
+
+When writing a test the Durable Object can easily be replaced by a fixture decoupling it from the rest of the code.
+
+### Testing Durable Objects
+
+The durable object can be tested by invoking the DO directly:
+
+```
+function createCaller(storage: any) {
+  return userRouter.createCaller({
+    req: new Request("http://localhost:8787"),
+    resHeaders: new Headers(),
+    env: {},
+    state: {},
+  });
+}
+
+const caller = createCaller({});
+
+await caller.validateAuthenticationCode({
+  code: "123456",
+  email: "test@example.com",
+  tenantId: "tenantId",
+});
+
+```

@@ -4,7 +4,7 @@ import { Context } from '../../src/context';
 import { createProxy } from '../../src';
 import { Env } from './env';
 
-const t = initTRPC.context<Context>().create();
+const t = initTRPC.context<Context<Env>>().create();
 
 const publicProcedure = t.procedure;
 
