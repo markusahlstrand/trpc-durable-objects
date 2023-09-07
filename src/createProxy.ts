@@ -10,8 +10,6 @@ import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { AnyRouterDef } from '@trpc/server/dist/core/router';
 import { Context, ContextFactory } from './context';
 
-const t = initTRPC.context<Context>().create();
-
 export { AnyRootConfig, AnyRouter, Router };
 
 export interface ModelFactory<Model> {
@@ -22,6 +20,8 @@ export function createProxy<
   TRouter extends Router<AnyRouterDef<AnyRootConfig, any>>,
   Env = any,
 >(router: AnyRouter, alarm?: (state: DurableObjectState) => Promise<void>) {
+  const t = initTRPC.context<Context<Env>>().create();
+
   return class DOProxy implements DurableObject {
     state: DurableObjectState;
 
