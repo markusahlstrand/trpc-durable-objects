@@ -14,7 +14,7 @@ npm install trpc-durable-objects --save
 
 The first step is to create a TRPC router:
 
-```
+```typescript
 import { initTRPC } from '@trpc/server';
 import { z } from 'zod';
 import { Context } from '../../src/context';
@@ -53,7 +53,7 @@ The router will be executed within a durable object but the types are exposed so
 
 The router is then passed to the factory method:
 
-```javascript
+```typescript
 import { CounterRouter, counterRouter } from './Counter';
 import { createProxy } from 'trpc-durable-object';
 
@@ -79,7 +79,7 @@ The factory method will return a proxy that can be used to interact with the dur
 
 The getInstanceByName is slightly slower than the getInstance method as it needs to look up in which instance the durable object is located. It is also possible to work with the DurableObjectId's directly which is faster:
 
-```javascript
+```typescript
 import { CounterRouter, counterRouter } from './Counter';
 import { createProxy } from 'trpc-durable-object';
 
@@ -106,7 +106,7 @@ export default {
 
 It's possible to pass a second parameter to the createProxy factory method that will be executed once an alarm is triggered within the durable object instance:
 
-```
+```typescript
 async function counterAlarm(state: DurableObjectState) {
   const count: number | undefined = await state.storage.get('count');
 
@@ -121,7 +121,7 @@ export const Counter = createProxy<CounterRouter>(counterRouter, counterAlarm);
 
 To make tRPC durable objects easy to work with and to test it's possible to add a factory to the Env:
 
-```
+```typescript
 export const State = createProxy<StateRouter>(stateRouter, stateAlarm);
 export type StateClient = ReturnType<typeof State.getInstance>;
 
@@ -137,7 +137,7 @@ export interface Env {
 
 The factory is decorated to the Env of each request:
 
-```
+```typescript
 const server = {
   async fetch(
     request: Request,
@@ -159,7 +159,7 @@ const server = {
 
 An instance of the tRPC object can be fetched like this:
 
-```
+```typescript
 const stateInstance = env.stateFactory.getInstanceByName("test");
 ```
 
@@ -169,7 +169,7 @@ When writing a test the Durable Object can easily be replaced by a fixture decou
 
 The durable object can be tested by invoking the DO directly:
 
-```
+```typescript
 function createCaller(storage: any) {
   return userRouter.createCaller({
     req: new Request("http://localhost:8787"),
